@@ -69,8 +69,10 @@ public class ConfigurableResourceFactory extends Config implements ResourceFacto
 
     @Override
     public void placeInstances(PlacementArea.ForType<ResourceObject> placementArea, World world) {
-        placedResources.clear();
         // Place resources randomly
+        
+        placedResources.clear();
+
         placeInstances(smallResourceSpec, placementArea, world);
         placeInstances(mediumResourceSpec, placementArea, world);
         placeInstances(largeResourceSpec, placementArea, world);

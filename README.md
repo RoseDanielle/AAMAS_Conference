@@ -1,8 +1,25 @@
-# AAMAS_Conference
-The NEAT and HyperNEAT experiments for the AAMAS conference 2018
+hons-simulator
+==============
 
-This is also the original code from Joshs Honours project for NEAT. Using this to try and figure out what is causing the memory overflow.
+A common simulator platform based on MASON for our honours project (2014).
 
-The other experiment approaches are to be branched from this branch (for Objective, Novelty and Hybrid)
+### Compile and run:
+The project requires Java 8.
+```bash
+git clone https://github.com/JayH5/hons-simulator.git
+cd hons-simulator
+./gradlew run
+```
 
-I'll make an entry here once this "master" branch is properly implemented to run the different branches of the experiments
+To package the project as a single large jar with all dependencies, run `./gradlew fatJar`. The output will be `build/libs/hons-simulator-all.jar`.
+
+### Dependencies
+The project dependencies can be seen in `build.gradle`. Two dependencies are included as .jars in `/libs`. This is because:
+* MASON is not on any package repository that we know of.
+* We forked JBox2D in order to implement ground friction in our top-down environment. See [here](https://github.com/JayH5/jbox2d/tree/topdown).
+
+### Experiments
+Each group member has their own experiment set-up.
+* To see @xenos5's, checkout the branch `GP`
+* To see @mracter's, checkout the branch `hetero_comp`
+* To see @JayH5's, see [here](https://github.com/JayH5/hons-experiment)
