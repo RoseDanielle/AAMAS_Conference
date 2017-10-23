@@ -1,7 +1,7 @@
 ---
 simulation:
   iterations: 1000
-config: 13
+config: 8
 environment:
   width: 20
   height: 20

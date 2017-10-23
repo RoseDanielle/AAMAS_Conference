@@ -52,15 +52,15 @@ public class Main {
 
 	private static Archive archive;
 
-	private static int[] sensorMorphologies = new int[]{2,5,6};
+	private static int[] sensorMorphologies = new int[]{1,2,5,6,7};
 
 	public static void main(String args[]) throws IOException, ParseException{
 
-		for(int j = 0; j < 3; j++) { //iterating over the different sensor morphologies
+		for(int j = 0; j < 5; j++) { //iterating over the different sensor morphologies
 
 			int morphologyIndex = sensorMorphologies[j];
 
-			for(int k = 0; k < 3; k++) { //iterating over the different complexity levels
+			for(int k = 0; k < 3; k++) { //iterating over the different levels of cooperation
 
 				Args options = new Args();
 				new JCommander(options, args);
@@ -80,13 +80,13 @@ public class Main {
 				//creating the folder directory for the results
 				String difficultyLevel = "";
 				if (difficulty == 1) {
-	                difficultyLevel = "Level_1_nocoop_simple";
+	                difficultyLevel = "Level_1";
 	            }
 	            else if (difficulty == 2) {
-	                difficultyLevel = "Level_2_coop_simple";
+	                difficultyLevel = "Level_2";
 	            }
 	            else if (difficulty == 3) {
-	                difficultyLevel = "Level_3_nocoop_complex";
+	                difficultyLevel = "Level_3";
 	            }
 	            else if(difficulty == 4) {
 	                difficultyLevel = "Level_4_coop_complex";

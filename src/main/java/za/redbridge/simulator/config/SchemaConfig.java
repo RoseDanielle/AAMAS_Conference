@@ -19,6 +19,7 @@ public class SchemaConfig extends Config{
     private String [] resourceArray = {"A","B","C"};
 
     public SchemaConfig(String filepath, int n, int k){
+
         Map<String, Object> config = null;
         configs = new Config[n];
         Yaml yaml = new Yaml();

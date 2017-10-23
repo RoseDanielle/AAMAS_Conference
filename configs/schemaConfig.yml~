@@ -203,21 +203,4 @@ config11:
     right: X
     up: X
     down: X
-config12:
-  resQuantity : 0 0 15
-  resource0:
-    left: X
-    right: X
-    up: X
-    down: X
-  resource1:
-    left: X
-    right: X
-    up: X
-    down: X
-  resource2:
-    left: C
-    right: C
-    up: C
-    down: C
   
