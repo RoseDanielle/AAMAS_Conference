@@ -52,7 +52,7 @@ public class Main {
 
 	private static Archive archive;
 
-	private static int[] sensorMorphologies = new int[]{1,2,5,6,7};
+	private static int[] sensorMorphologies = new int[]{1,3,5};// new int[]{1,2,5,6,7};
 
 	public static void main(String args[]) throws IOException, ParseException{
 
@@ -145,7 +145,7 @@ public class Main {
         private int populationSize = 150;
 
         @Parameter(names = "--sim-runs", description = "Number of simulation runs per iteration")
-        private int simulationRuns = 5;
+        private int simulationRuns = 3;//5;
 
         @Parameter(names = "--conn-density", description = "Adjust the initial connection density"
                 + " for the population")
