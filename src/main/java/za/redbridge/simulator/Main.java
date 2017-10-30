@@ -52,7 +52,7 @@ public class Main {
 
 	private static Archive archive;
 
-	private static int[] sensorMorphologies = new int[]{1,3,5};// new int[]{1,2,5,6,7};
+	private static int[] sensorMorphologies = new int[]{1,3,5};
 
 	public static void main(String args[]) throws IOException, ParseException{
 
@@ -60,7 +60,7 @@ public class Main {
 
 			int morphologyIndex = sensorMorphologies[j];
 
-			for(int k = 0; k < 3; k++) { //iterating over the different levels of cooperation
+			for(int k = 0; k < 3; k++) { //iterating over the different complexity levels
 
 				Args options = new Args();
 				new JCommander(options, args);
@@ -80,18 +80,18 @@ public class Main {
 				//creating the folder directory for the results
 				String difficultyLevel = "";
 				if (difficulty == 1) {
-	                difficultyLevel = "Level_1";
+	                difficultyLevel = "Level_1"; //schemaConfig no.10 (SimConfig1 config 11)
 	            }
 	            else if (difficulty == 2) {
-	                difficultyLevel = "Level_2";
+	                difficultyLevel = "Level_2"; //schemaConfig no.11 (SimConfig2 config 12)
 	            }
 	            else if (difficulty == 3) {
-	                difficultyLevel = "Level_3";
+	                difficultyLevel = "Level_3"; //schemaConfig no.12 (SimConfig3 config 13)
 	            }
 	            else if(difficulty == 4) {
 	                difficultyLevel = "Level_4_coop_complex";
 	            }
-				String folderDir = "/HyperNEATExperiments/Objective/Morphology_"
+				String folderDir = "/Morphology_"
 										+ Integer.toString(morphologyIndex) + "/" + difficultyLevel;
 				Utils.setDirectoryName(folderDir);
 
@@ -152,7 +152,7 @@ public class Main {
         private double connectionDensity = 0.5;
         @Parameter(names = "--demo", description = "Show a GUI demo of a given genome")
         private String genomePath = null;
-        //private String genomePath = "results/Hex-20160920T2134_null__NEAT/best networks/epoch-5/network.ser";
+        //private String genomePath = "/home/p/pttand010/Desktop/AAMAS_Experiments/HyperNEATObjective/Run_1/AAMAS_Conference/results/HyperNEATExperiments/Objective/Morphology_2/Level_1_nocoop_simple/best networks/epoch-1/network.ser";
         //private String genomePath = "results/ruben-GE72-2QD-20161030T1126_null/best networks/epoch-1/network.ser";
         //private String genomePath = "results/ruben-GE72-2QD-20161102T1342_null/best networks/epoch-1/network.ser";
 

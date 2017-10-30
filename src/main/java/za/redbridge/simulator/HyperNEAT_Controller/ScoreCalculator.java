@@ -136,6 +136,7 @@ public class ScoreCalculator implements CalculateScore {
                 for(int i = 0; i < simulationRuns; i++) {
 
                     Behaviour resultantBehaviour = simulation.runObjective();
+
                     int [] resTypeCount = simulation.getResTypeCount();
                     int tempTotal = resTypeCount[0] + resTypeCount[1] + resTypeCount[2];
                     aggregateBehaviour.setTotalNumRes(tempTotal);
