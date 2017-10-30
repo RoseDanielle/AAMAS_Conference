@@ -56,7 +56,7 @@ public class Main {
 
 	public static void main(String args[]) throws IOException, ParseException{
 
-		for(int j = 0; j < 5; j++) { //iterating over the different sensor morphologies
+		for(int j = 0; j < 3; j++) { //iterating over the different sensor morphologies
 
 			int morphologyIndex = sensorMorphologies[j];
 
