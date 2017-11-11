@@ -1,0 +1,71 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: NECC-FINAL.aux
+The style file: IEEEtran.bst
+Database file #1: IEEEabrv.bib
+Database file #2: necc_paper.bib
+Database file #3: EvoComp.bib
+I was expecting a `,' or a `}'---line 142 of file EvoComp.bib
+ :   address = ""
+ :               University of Pittsburgh, USA",
+I'm skipping whatever remains of this entry
+You're missing a field name---line 230 of file EvoComp.bib
+ : 
+ : %  address = "Cambridge",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Repeated entry---line 799 of file EvoComp.bib
+ : @inproceedings{BrooksMaesMataricMore1990
+ :                                         ,
+I'm skipping whatever remains of this entry
+You're missing a field name---line 1040 of file EvoComp.bib
+ : 
+ : % pages = "",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You're missing a field name---line 1161 of file EvoComp.bib
+ : 
+ : %  editor =       "Laurence T. Yang and Hai Jin and Jianhua Ma and Theo Ungerer",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You're missing a field name---line 1178 of file EvoComp.bib
+ : 
+ : %  editor =       "Robert Meersman and Zahir Tari",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Repeated entry---line 1769 of file EvoComp.bib
+ : @article{verbancsics_evolving_2010
+ :                                   ,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 1874 of file EvoComp.bib
+ :     
+ :     year = "2004",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You're missing a field name---line 3952 of file EvoComp.bib
+ : 
+ : %  address = "Berlin, Germany",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You're missing a field name---line 3972 of file EvoComp.bib
+ : 
+ : %  address = "Tokyo, Japan",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Repeated entry---line 4065 of file EvoComp.bib
+ : @inproceedings{SchultzBugajska2003
+ :                                   ,
+I'm skipping whatever remains of this entry
+Database file #4: Dissertation.bib
+Repeated entry---line 480 of file Dissertation.bib
+ : @incollection{Werfel2007
+ :                         ,
+I'm skipping whatever remains of this entry
+-- IEEEtran.bst version 1.13 (2008/09/30) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Name 1 in "J. Bongard, and R. Pfeifer" has a comma at the end for entry BongardPfeifer2003
+while executing---line 2419 of file IEEEtran.bst
+Warning--empty journal in verbancsics_evolving_2010
+Warning--empty year in verbancsics_evolving_2010
+
+Done.
+(There were 13 error messages)

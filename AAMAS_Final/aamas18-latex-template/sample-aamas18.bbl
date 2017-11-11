@@ -1,0 +1,164 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{00}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[\protect\citeauthoryear{Beckers, Holland, and Deneubourg}{Beckers
+  et~al\mbox{.}}{1994}]%
+        {BeckersHollandDeneubourg1994}
+\bibfield{author}{\bibinfo{person}{R. Beckers}, \bibinfo{person}{O. Holland},
+  {and} \bibinfo{person}{J. Deneubourg}.} \bibinfo{year}{1994}\natexlab{}.
+\newblock \showarticletitle{From local actions to global tasks: Stigmergy and
+  collective robotics}. In \bibinfo{booktitle}{{\em Proceedings of the
+  International Workshop on the Synthesis and Simulation of Living Systems}}.
+  \bibinfo{publisher}{MIT Press}, \bibinfo{address}{Cambridge, USA},
+  \bibinfo{pages}{181--189}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{D'Ambrosio and Stanley}{D'Ambrosio and
+  Stanley}{2008}]%
+        {DAmbrosioStanley2008}
+\bibfield{author}{\bibinfo{person}{D. D'Ambrosio} {and} \bibinfo{person}{K.
+  Stanley}.} \bibinfo{year}{2008}\natexlab{}.
+\newblock \showarticletitle{Generative Encoding for Multiagent Learning}. In
+  \bibinfo{booktitle}{{\em Proceedings of the Genetic and Evolutionary
+  Computation Conference}}. \bibinfo{publisher}{ACM Press},
+  \bibinfo{address}{Atlanta, USA}, \bibinfo{pages}{819--826}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{{D'Ambrosio} and Stanley}{{D'Ambrosio} and
+  Stanley}{2013}]%
+        {DAmbrosio2013}
+\bibfield{author}{\bibinfo{person}{D. {D'Ambrosio}} {and} \bibinfo{person}{K.
+  Stanley}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Scalable Multiagent Learning through Indirect
+  Encoding of Policy Geometry}.
+\newblock \bibinfo{journal}{{\em Evolutionary Intelligence Journal\/}}
+  \bibinfo{volume}{6}, \bibinfo{number}{1} (\bibinfo{year}{2013}),
+  \bibinfo{pages}{1--26}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Hewland and Nitschke}{Hewland and
+  Nitschke}{2015}]%
+        {HewlandNitschke2015}
+\bibfield{author}{\bibinfo{person}{J. Hewland} {and} \bibinfo{person}{G.
+  Nitschke}.} \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Evolving Robust Robot Team Morphologies for
+  Collective Construction}. In \bibinfo{booktitle}{{\em The Benefits of
+  Adaptive Behavior and Morphology for Cooperation in Robot Teams}}.
+  \bibinfo{publisher}{IEEE}, \bibinfo{address}{Cape Town, South Africa},
+  \bibinfo{pages}{1047--1054}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Lambercy and Tharin}{Lambercy and
+  Tharin}{2013}]%
+        {khepera3usermanual2013}
+\bibfield{author}{\bibinfo{person}{F. Lambercy} {and} \bibinfo{person}{J.
+  Tharin}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \bibinfo{booktitle}{{\em Khepera III User Manual: Version 3.5}}.
+\newblock \bibinfo{publisher}{K-Team Corporation}, \bibinfo{address}{Lausanne,
+  Switzerland}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Nitschke, Schut, and Eiben}{Nitschke
+  et~al\mbox{.}}{2012}]%
+        {NitschkeSaEC2012}
+\bibfield{author}{\bibinfo{person}{G. Nitschke}, \bibinfo{person}{M. Schut},
+  {and} \bibinfo{person}{A. Eiben}.} \bibinfo{year}{2012}\natexlab{}.
+\newblock \showarticletitle{Evolving Behavioral Specialization in Robot Teams
+  to Solve a Collective Construction Task}.
+\newblock \bibinfo{journal}{{\em Swarm and Evolutionary Computation\/}}
+  \bibinfo{volume}{2}, \bibinfo{number}{1} (\bibinfo{year}{2012}),
+  \bibinfo{pages}{25–--38}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Stanley}{Stanley}{2007}]%
+        {Stanley2007}
+\bibfield{author}{\bibinfo{person}{K. Stanley}.}
+  \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{Compositional pattern producing networks: A novel
+  abstraction of development}.
+\newblock \bibinfo{journal}{{\em Genetic Programming and Evolvable Machines:
+  Special Issue on Developmental Systems\/}} \bibinfo{volume}{8},
+  \bibinfo{number}{2} (\bibinfo{year}{2007}), \bibinfo{pages}{131--162}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Stanley, D'Ambrosio, and Gauci}{Stanley
+  et~al\mbox{.}}{2009}]%
+        {StanleyDAmbrosioGauci2009}
+\bibfield{author}{\bibinfo{person}{K. Stanley}, \bibinfo{person}{D'Ambrosio},
+  {and} \bibinfo{person}{J. Gauci}.} \bibinfo{year}{2009}\natexlab{}.
+\newblock \showarticletitle{Hypercube-based indirect encoding for evolving
+  large-scale neural networks}.
+\newblock \bibinfo{journal}{{\em Artificial Life\/}} \bibinfo{volume}{15},
+  \bibinfo{number}{1} (\bibinfo{year}{2009}), \bibinfo{pages}{185--212}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Stanley and Miikkulainen}{Stanley and
+  Miikkulainen}{2002}]%
+        {StanleyMiikkulainen2002}
+\bibfield{author}{\bibinfo{person}{K. Stanley} {and} \bibinfo{person}{R.
+  Miikkulainen}.} \bibinfo{year}{2002}\natexlab{}.
+\newblock \showarticletitle{Evolving neural networks through augmenting
+  topologies}.
+\newblock \bibinfo{journal}{{\em Evolutionary Computation.\/}}
+  \bibinfo{volume}{10}, \bibinfo{number}{2} (\bibinfo{year}{2002}),
+  \bibinfo{pages}{99–--127}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Watson and Nitschke}{Watson and
+  Nitschke}{2015}]%
+        {WatsonNitschke2015SSCI}
+\bibfield{author}{\bibinfo{person}{J. Watson} {and} \bibinfo{person}{G.
+  Nitschke}.} \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Evolving Robust Robot Team Morphologies for
+  Collective Construction}. In \bibinfo{booktitle}{{\em Proceedings of the IEEE
+  Symposium Series on Computational Intelligence}}. \bibinfo{publisher}{IEEE},
+  \bibinfo{address}{Cape Town, South Africa}, \bibinfo{pages}{1039--1046}.
+\newblock
+
+
+\end{thebibliography}
