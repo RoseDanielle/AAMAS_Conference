@@ -3,421 +3,149 @@ package za.redbridge.simulator;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import org.encog.Encog;
-import org.encog.ml.MLMethod;
-import org.encog.ml.MethodFactory;
-import org.encog.ml.ea.train.basic.TrainEA;
+import org.encog.neural.hyperneat.substrate.Substrate;
+import za.redbridge.simulator.ScoreCalculator;
+import org.encog.neural.neat.NEATPopulation; //importing the neat population
+import za.redbridge.simulator.config.MorphologyConfig;
 import org.encog.neural.neat.NEATNetwork;
-import org.encog.neural.neat.NEATPopulation;
-import org.encog.neural.networks.BasicNetwork;
+//import org.encog.neural.hyperneat.substrate.SubstrateFactory;
+import org.encog.ml.ea.train.basic.TrainEA;
+import za.redbridge.simulator.StatsRecorder;
+import za.redbridge.simulator.Morphology;
+import za.redbridge.simulator.config.SimConfig;
+import za.redbridge.simulator.NEATUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import za.redbridge.simulator.novelty.NoveltySearchStrategy;
-import za.redbridge.simulator.NEAT.NEATUtil;
-
 import java.io.IOException;
 import java.text.ParseException;
+import org.encog.neural.neat.training.species.OriginalNEATSpeciation;
 
-import java.util.Arrays;
-import java.util.concurrent.ForkJoinPool;
+import org.encog.Encog;
 
-import za.redbridge.simulator.config.SimConfig;
-import za.redbridge.simulator.khepera.KheperaIIIPhenotype_simple;
-import za.redbridge.simulator.khepera.KheperaIIIPhenotype;
-import za.redbridge.simulator.phenotype.*;
-import za.redbridge.simulator.config.MorphologyConfig;
-import za.redbridge.simulator.paramTuning.*;
-import za.redbridge.simulator.novelty.NoveltyTrainer;
+import za.redbridge.simulator.phenotype.ChasingPhenotype;
 
+import org.encog.ml.train.strategy.Strategy;
+import java.util.List;
 
 import static za.redbridge.simulator.Utils.isBlank;
 import static za.redbridge.simulator.Utils.readObjectFromFile;
 
-/**
- * Entry point for the controller platform.
- *
- * Created by jamie on 2014/09/09.
- */
+import za.redbridge.simulator.Archive;
+
+import za.redbridge.simulator.Utils;
+
 public class Main {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    private static final double CONVERGENCE_SCORE = 110;
+	private final static Logger log = LoggerFactory.getLogger(Main.class);
+	private final static double convergenceScore = 1000;
 
-    // public static final boolean IS_NOVELTY = false;
-    // public static final boolean IS_HYBRID = true;
+	private static int numInputs;
+	private int numOutputs = 2;
+	private int populationSize;
+	private int simulationRuns;
+	private int numIterations;
+	private int threadCount;
 
-    public static enum SEARCH_MECHANISM {
-        OBJECTIVE, NOVELTY, HYBRID
-    }
+	private static Archive archive;
 
-    public static final boolean PARAM_TUNING = false;
+	public static void main(String args[]) throws IOException, ParseException{
 
-    public static String RES_CONFIG;
+		for(int k = 0; k < 3; k++) { //iterating over the different complexity levels
 
-    public static int thread_count = 0;
-    public static void main(String[] args) throws IOException, ParseException {
-        Args options = new Args();
-        new JCommander(options, args);
+			Args options = new Args();
+			new JCommander(options, args);
+			log.info(options.toString());
 
-        log.info(options.toString());
+			int difficulty = k+1;
 
-        SimConfig simConfig;
-        if (!isBlank(options.configFile)) {
-            simConfig = new SimConfig(options.configFile);
-        } else {
-            simConfig = new SimConfig();
-        }
+			//getting the correct simulation configuration for this experiment case
+			//simconfig shows the types of blocks present, as well as their properties and the connection schema that is to be used
+			String simConfigFP = "configs/simConfig" + Integer.toString(difficulty) + ".yml";
+			SimConfig simConfig = new SimConfig(simConfigFP);
 
-        MorphologyConfig mc = new MorphologyConfig("configs/morphologyConfig.yml");
+			SensorCollection sensorCollection = new SensorCollection("configs/morphologyConfig.yml");
+			Morphology morphology = sensorCollection.getMorph(2);
+			numInputs = morphology.getNumSensors();
 
-        // KheperaIIIPhenotype_simple.Configuration morphology_config = new KheperaIIIPhenotype_simple.Configuration();
-        // morphology_config.enableProximitySensors40Degrees = true;
-        // morphology_config.enableProximitySensors140Degrees = true;
-        // morphology_config.enableProximitySensor180Degrees = true;
-        // morphology_config.enableUltrasonicSensor0Degrees = true;
-        // morphology_config.enableUltrasonicSensors90Degrees = true;
-        // morphology_config.enableProximitySensorBottom = true;
-
-        // morphology_config.enableColourRangedSensor = true;
-        // morphology_config.enableLowResCameraSensor = true;
-
-        // KheperaIIIPhenotype K = new KheperaIIIPhenotype(morphology_config);
-        // ChasingPhenotype_simple CP = new ChasingPhenotype_simple();
-    //     // Load the morphology
-        // Morphology morphology = new Morphology (CP.getSensors(), CP.getSensors().size());
-        Morphology morphology = mc.getMorphology(1);
-
-        // System.out.println("Sensors count :" + morphology.getNumSensors());
-        RES_CONFIG = options.environment;
-
-        if (PARAM_TUNING) {
-            ParameterTuning paramTuner = new ParameterTuning("paramTuning/params.txt");
-
-            for (double[] param : paramTuner.getParamList()) {
-                System.out.println("Running NEAT with objective search");
-                System.out.println("Params: " + Arrays.toString(param));
-                // double[] testParams = {500, 1, 0.5, 1, 3};
-                // double[] testParams = {1000, 0.3, 0, 0, 0.2, 1, 0};
-                ScoreCalculator calculateScore =
-                        new ScoreCalculator(simConfig, options.simulationRuns, morphology, param, PARAM_TUNING, SEARCH_MECHANISM.OBJECTIVE, options.populationSize, 0);
-
-                if (!isBlank(options.genomePath)) {
-                    NEATNetwork network = (NEATNetwork) readObjectFromFile(options.genomePath);
-                    calculateScore.demo(network);
-                    return;
-                }
-
-                final NEATPopulation population;
-
-                //create new NEAT population: #input neurons, #output neurons, population size
-                population = new NEATPopulation(morphology.getSensors().size(), 2, options.populationSize);
-                population.setInitialConnectionDensity(options.connectionDensity);
-                population.reset();
-
-                log.debug("Population initialized : "+options.populationSize);
-
-                //DO training
-                TrainEA train;
-                train = NEATUtil.constructNEATTrainer(population, calculateScore); //a trainer for a score function.
-                //set #threads to use
-                if (thread_count > 0) {
-                    train.setThreadCount(thread_count);
-                }
-
-                //intialise the stats recorder
-                final StatsRecorder statsRecorder = new StatsRecorder(train, calculateScore, PARAM_TUNING, Arrays.toString(param), simConfig.toString());
-                statsRecorder.recordIterationStats();
-                // calculateScore.demo(train.getCODEC().decode(train.getBestGenome()));
-                for (int i = train.getIteration(); i < options.numGenerations; i++) {
-                    train.iteration();
-                    statsRecorder.recordIterationStats();
-                    // if (train.getBestGenome().getScore() >= CONVERGENCE_SCORE) {
-                    //     log.info("Convergence reached at epoch " + train.getIteration());
-                    //     break;
-                    // }
-                }
-                // calculateScore.demo(train.getCODEC().decode(train.getBestGenome()));
-                log.debug("Training complete");
-                Encog.getInstance().shutdown();
+			//creating the folder directory for the results
+			String difficultyLevel = "";
+			if (difficulty == 1) {
+                difficultyLevel = "Level_1_nocoop_simple";
             }
-
-            // ParamTester pt = new ParamTester(paramTuner.getParamList(), 0, paramTuner.getParameterListSize(), 1, options);
-
-            // ForkJoinPool fjPool = new ForkJoinPool();
-            // fjPool.invoke(pt);
-            // pt.endParamTraining(); 
-        }
-
-        else {
-
-            /**
-            NEAT with Novelty search
-            **/
-            if (options.searchMechanism == SEARCH_MECHANISM.NOVELTY) {
-                for (int run = 0; run < 3; run++) {
-                    //NEAT
-                    System.out.println("Running NEAT with novelty search (Easy): RUN " + (run+1));
-
-                    // double[] testParams = {500, 1, 0.5, 1, 3};
-                    double[] testParams = {1000, 0.5, 0.5, 0.5, 0.7, 1, 0.8};
-
-                    ScoreCalculator calculateScore =
-                            new ScoreCalculator(simConfig, options.simulationRuns, morphology, testParams, PARAM_TUNING, SEARCH_MECHANISM.NOVELTY, options.populationSize, (run+1));
-
-                    if (!isBlank(options.genomePath)) {
-                        NEATNetwork network = (NEATNetwork) readObjectFromFile(options.genomePath);
-                        calculateScore.demo(network);
-                        return;
-                    }
-
-                    final NEATPopulation population;
-
-                    //create new NEAT population: #input neurons, #output neurons, population size
-                    population = new NEATPopulation(morphology.getSensors().size(), 2, options.populationSize);
-                    population.setInitialConnectionDensity(options.connectionDensity);
-                    population.reset();
-
-                    log.debug("Population initialized : "+options.populationSize);
-
-
-                    //DO training
-                    NoveltyTrainer train;
-                    train = NEATUtil.constructNEATNoveltyTrainer(population, calculateScore, options.searchMechanism); //a trainer for a score function.
-                    train.addStrategy(new NoveltySearchStrategy(options.populationSize, calculateScore));
-                    //set #threads to use
-                    if (thread_count > 0) {
-                        train.setThreadCount(thread_count);
-                    }
-                    //intialise the stats recorder
-                    final StatsRecorder statsRecorder = new StatsRecorder(train, calculateScore, false, Arrays.toString(testParams), simConfig.toString());
-                    statsRecorder.recordIterationStats();
-                    // calculateScore.demo(train.getCODEC().decode(train.getBestGenome()));
-                    for (int i = train.getIteration(); i < options.numGenerations; i++) {
-                        train.iteration();
-                        statsRecorder.recordIterationStats();
-                        // if (train.getBestGenome().getScore() >= CONVERGENCE_SCORE) {
-                        //     log.info("Convergence reached at epoch " + train.getIteration());
-                        //     break;
-                        // }
-                    }
-                    // calculateScore.demo(train.getCODEC().decode(train.getPopulation().getBestGenome()));
-                    log.debug("Training complete for RUN " + (run+1));
-                    Encog.getInstance().shutdown();   
-                }
+            else if (difficulty == 2) {
+                difficultyLevel = "Level_2_coop_simple";
             }
-            /**
-            NEAT with hybrid search
-            **/
-            else if (options.searchMechanism == SEARCH_MECHANISM.HYBRID) {
-                //NEAT
-                System.out.println("Running NEAT with hybrid search");
-                
-                double[] testParams = {100, 0.5, 0.5, 0.5, 0.7, 1, 0.8};
-
-                ScoreCalculator calculateScore =
-                        new ScoreCalculator(simConfig, options.simulationRuns, morphology, testParams, PARAM_TUNING, SEARCH_MECHANISM.HYBRID, options.populationSize, 0);
-
-                if (!isBlank(options.genomePath)) {
-                    NEATNetwork network = (NEATNetwork) readObjectFromFile(options.genomePath);
-                    calculateScore.demo(network);
-                    return;
-                }
-
-                final NEATPopulation population;
-
-                //create new NEAT population: #input neurons, #output neurons, population size
-                population = new NEATPopulation(morphology.getSensors().size(), 2, options.populationSize);
-                population.setInitialConnectionDensity(options.connectionDensity);
-                population.reset();
-
-                log.debug("Population initialized : "+options.populationSize);
-
-
-                //DO training
-                NoveltyTrainer train;
-                train = NEATUtil.constructNEATNoveltyTrainer(population, calculateScore, options.searchMechanism); //a trainer for a score function.
-                train.addStrategy(new NoveltySearchStrategy(options.populationSize, calculateScore));
-                //set #threads to use
-                if (thread_count > 0) {
-                    train.setThreadCount(thread_count);
-                }
-                //intialise the stats recorder
-                final StatsRecorder statsRecorder = new StatsRecorder(train, calculateScore, false, Arrays.toString(testParams), simConfig.toString());
-                statsRecorder.recordIterationStats();
-                // calculateScore.demo(train.getCODEC().decode(train.getBestGenome()));
-                for (int i = train.getIteration(); i < options.numGenerations; i++) {
-                    train.iteration();
-                    statsRecorder.recordIterationStats();
-                    // if (train.getBestGenome().getScore() >= CONVERGENCE_SCORE) {
-                    //     log.info("Convergence reached at epoch " + train.getIteration());
-                    //     break;
-                    // }
-                }
-                // calculateScore.demo(train.getCODEC().decode(train.getPopulation().getBestGenome()));
-                log.debug("Training complete");
-                Encog.getInstance().shutdown();
+            else if (difficulty == 3) {
+                difficultyLevel = "Level_3_nocoop_complex";
             }
-            /**
-            NEAT with Objective search
-
-            objective fitness of a simulation run:
-            A - average distance between robot and closest resource to it
-            B - average number of times that robots connected to resources
-            C - average distance between resources
-            D - the number of adjacent resources
-            E - the number of adjacent resources that are in the correct schema
-            F - average distance between resources and the construction starting area
-            OR:
-            A - number of times a robot successfully found blocks
-            B - number of times type A blocks were pushed by one robot and connected with a built structure
-            C - number of times type B blocks were pushed by two robots and connected with a built structure
-            D - number of times type C blocks were pushed by two robots and connected with a built structure
-            **/
-            else {
-                //NEAT
-                for (int run = 0; run < 5; run++) {
-                    System.out.println("Running NEAT with objective search: RUN " + (run+1));
-                    double[] params = {1000, 0, 0.3, 0.6, 1};
-                    // double[] params = {1000, 0.3, 0, 0, 0.2, 1, 0};
-                    // double[] params = {1000, 0.5, 0.3, 0.1, 0.2, 1, 0.2};
-                    ScoreCalculator calculateScore =
-                            new ScoreCalculator(simConfig, options.simulationRuns, morphology, params, PARAM_TUNING, SEARCH_MECHANISM.OBJECTIVE, options.populationSize, (run+1));
-
-                    if (!isBlank(options.genomePath)) {
-                        NEATNetwork network = (NEATNetwork) readObjectFromFile(options.genomePath);
-                        calculateScore.demo(network);
-                        return;
-                    }
-
-                    final NEATPopulation population;
-
-                    //create new NEAT population: #input neurons, #output neurons, population size
-                    population = new NEATPopulation(morphology.getSensors().size(), 2, options.populationSize);
-                    population.setInitialConnectionDensity(options.connectionDensity);
-                    population.reset();
-
-                    log.debug("Population initialized : "+options.populationSize);
-
-                    //DO training
-                    TrainEA train;
-                    train = NEATUtil.constructNEATTrainer(population, calculateScore); //a trainer for a score function.
-                    //set #threads to use
-                    if (thread_count > 0) {
-                        train.setThreadCount(thread_count);
-                    }
-
-                    //intialise the stats recorder
-                    final StatsRecorder statsRecorder = new StatsRecorder(train, calculateScore, PARAM_TUNING, Arrays.toString(params), simConfig.toString());
-                    statsRecorder.recordIterationStats();
-                    // calculateScore.demo(train.getCODEC().decode(train.getBestGenome()));
-                    for (int i = train.getIteration(); i < options.numGenerations; i++) {
-                        train.iteration();
-                        statsRecorder.recordIterationStats();
-                        // if (train.getBestGenome().getScore() >= CONVERGENCE_SCORE) {
-                        //     log.info("Convergence reached at epoch " + train.getIteration());
-                        //     break;
-                        // }
-                    }
-                    // calculateScore.demo(train.getCODEC().decode(train.getBestGenome()));
-                    log.debug("Training complete for RUN " + (run+1));
-                    Encog.getInstance().shutdown();
-                }
-                
+            else if(difficulty == 4) {
+                difficultyLevel = "Level_4_coop_complex";
             }
-        }
-    }
+			String folderDir = "/EvaluationRuns/GitBranch/" + difficultyLevel;
+			Utils.setDirectoryName(folderDir);
 
-    public static class Args {
+			ScoreCalculator scoreCalculator = new ScoreCalculator(simConfig, options.simulationRuns,
+								morphology, options.populationSize, sensorCollection);
+
+			if (!isBlank(options.genomePath)) {
+				   NEATNetwork network = (NEATNetwork) readObjectFromFile(options.genomePath);
+				   scoreCalculator.demo(network);
+				   return;
+		    }
+
+			String networkSourceDirectory = "/home/ruben/Masters_2017/Experiments/EvaluationRuns/ExperimentsRerun/ResultNetworks/network.ser";
+
+			//final StatsRecorder statsRecorder = new StatsRecorder(trainer, scoreCalculator); //this is basically where the simulation runs
+
+			NEATNetwork network = (NEATNetwork) readObjectFromFile(networkSourceDirectory);
+
+			//final StatsRecorder statsRecorder = new StatsRecorder(scoreCalculator); //this is basically where the simulation runs
+
+			scoreCalculator.runEvaluation(network);
+			log.debug("Evaluation Complete");
+			Encog.getInstance().shutdown();
+		}
+	}
+
+	private static class Args {
         @Parameter(names = "-c", description = "Simulation config file to load")
-        public String configFile = "configs/simConfig.yml";
+        private String configFile = "configs/simConfig.yml";
 
         @Parameter(names = "-i", description = "Number of generations to train for")
-        public int numGenerations = 100;
+        private int numGenerations = 100;
 
         @Parameter(names = "-p", description = "Initial population size")
-        public int populationSize = 150;
+        private int populationSize = 150;
 
         @Parameter(names = "--sim-runs", description = "Number of simulation runs per iteration")
-        public int simulationRuns = 5;
-
-        @Parameter(names = "--search-mechanism", description = "The search mechanism to be used")
-        public SEARCH_MECHANISM searchMechanism = SEARCH_MECHANISM.NOVELTY;
+        private int simulationRuns = 5;
 
         @Parameter(names = "--conn-density", description = "Adjust the initial connection density"
                 + " for the population")
-        public double connectionDensity = 0.5;
+        private double connectionDensity = 0.5;
         @Parameter(names = "--demo", description = "Show a GUI demo of a given genome")
-        public String genomePath = null;
-        // public String genomePath = "results/Hex-20160925T1813_null__NEAT/best networks/epoch-7/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 100.0, 100.0, 100.0, 100.0, 50.0, 2.0]/Hex-20161002T0312_null__NEAT/best networks/epoch-10/network.ser";
-        // public String genomePath = "results/Hex-20161002T1530_null__NEAT/best networks/epoch-49/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0]/Hex-20161004T1412_null__NEAT/best networks/epoch-23/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.5, 0.5, 0.3, 0.0, 0.0, 0.0]/Hex-20161004T1412_null__NEAT/best networks/epoch-13/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 0.5, 1.0, 3.0]/Hex-20161004T2135_null__NEAT/best networks/epoch-1/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 1.0, 0.5, 1.0, 3.0]/Hex-20161004T2134_null__NEAT/best networks/epoch-9/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.5, 0.5, 0.3, 0.0, 0.0, 0.0]/Hex-20161004T1412_null__NEAT/best networks/epoch-13/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.5, 0.5, 0.3, 0.3, 0.0, 0.0]/Hex-20161004T1642_null__NEAT/best networks/epoch-27/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.5, 0.5, 0.5, 0.3, 0.0, 0.0]/Hex-20161004T1642_null__NEAT/best networks/epoch-28/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 100.0, 100.0, 100.0, 100.0, 50.0, 2.0]/Hex-20161002T0312_null__NEAT/best networks/epoch-10/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 1.0, 1.0, 1.0, 1.0]/Hex-20161006T1541_null__NEAT/best networks/epoch-30/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0]/Hex-20161008T2317_null__NEAT/best networks/epoch-27/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 0.0, 0.5, 0.5, 0.3, 0.0]/Hex-20161008T1126_null__NEAT/best networks/epoch-27/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.3]/Hex-20161008T1126_null__NEAT/best networks/epoch-23/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]/Hex-20161008T2314_null__NEAT/best networks/epoch-24/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 0.7, 0.9, 1.0]/Hex-20161006T1645_null__NEAT/best networks/epoch-28/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 1.0, 1.0, 1.0]/Hex-20161006T1645_null__NEAT/best networks/epoch-30/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]/Hex-20161019T1149_null__NEAT/best networks/epoch-29/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.3]/Hex-20161019T1149_null__NEAT/best networks/epoch-14/network.ser";
-        // public String genomePath = "paramTuning/results/[500.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0]/Hex-20161019T2030_null__NEAT/best networks/epoch-22/network.ser";
-        // public String genomePath = "results/Hex-20161023T2133_null__NEAT/best networks/epoch-1/network.ser";
-        // public String genomePath = "results/Hex-20161027T1306_null__NEAT/best networks/epoch-7/network.ser";
-        // public String genomePath = "results/Hex-20161028T1449_null__NEAT/best networks/epoch-3/network.ser";
-
-        //UPDATED MUTATION RUNS
-        // public String genomePath = "/Users/joshbuchalter/Google Drive/Varsity/Honours/CS/Honours_Project/TestRuns/UpdatedMutation/Hex-20161105T1642_null__NEAT/best networks/epoch-57/network.ser";
-
-        //1 CZ TEST RUN
-        // public String genomePath = "/Users/joshbuchalter/Google Drive/Varsity/Honours/CS/Honours_Project/TestRuns/SingleCZTest/Hex-20161105T1314_null__NEAT/best networks/epoch-48/network.ser";
-
-        //SHORT FITNESS FUNCTION BEST PERFORMING NETOWRK
-        // public String genomePath = "/Users/joshbuchalter/Google Drive/Varsity/Honours/CS/Honours_Project/TestRuns/ShortFitness Function/[500.0, 0.0, 1.0, 1.0, 1.0]/Hex-20161104T2250_null__NEAT/best networks/epoch-30/network.ser";
-        //Best from updated mutation
-        // public String genomePath = "/Users/joshbuchalter/Google Drive/Varsity/Honours/CS/Honours_Project/TestRuns/ShortFitness/ShortFitness1/[500.0, 0.0, 1.0, 1.0, 1.0]/Hex-20161107T0215_null__NEAT/best networks/epoch-38/network.ser";
-        // public String genomePath = "/Users/joshbuchalter/Google Drive/Varsity/Honours/CS/Honours_Project/TestRuns/ShortFitness/ShortFitness2/[500.0, 1.0, 0.3, 0.6, 1.0]/Hex-20161106T2245_null__NEAT/best networks/epoch-10/network.ser";
-
-        //LONG FITNESS FUNCTION BEST PERFORMING
-        // public String genomePath = "/Users/joshbuchalter/Google Drive/Varsity/Honours/CS/Honours_Project/TestRuns/LongFitnessFunctionRuns/[500.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]/Hex-20161104T2243_null__NEAT/best networks/epoch-18/network.ser";
-        //Best from updated mutation
-        // public String genomePath = "/Users/joshbuchalter/Google Drive/Varsity/Honours/CS/Honours_Project/TestRuns/LongFitness/LongFitness1/[500.0, 0.8, 0.7, 0.9, 1.0, 1.0, 1.0]/Hex-20161106T2208_null__NEAT/best networks/epoch-40/network.ser";
-
-        //NOVELTY RUNS
-        // public String genomePath = "results/Hex-20161102T2333_null__NEAT/best networks/epoch-78/network.ser";
-        // public String genomePath = "/Users/joshbuchalter/Documents/casairt-2016-Josh-implementation/results/Hex-20161111T1436_null__NEAT/best networks/epoch-30/network.ser";
-
-        //HYBRID RUNS
-
-        //LONG OBJECTIVE RUNS
-        // public String genomePath = "/Users/joshbuchalter/Documents/casairt-2016-Josh-implementation/ObjectiveRunsSoFar/CZs-Not_Updated/Hex-20161031T1703_null__NEAT/best networks/epoch-37/network.ser";
-        // public String genomePath = "/Users/joshbuchalter/Documents/casairt-2016-Josh-implementation/ObjectiveRunsSoFar/CZs-Not_Updated/Hex-20161031T1703_null__NEAT/best networks/epoch-88/network.ser";
-        // public String genomePath = "/Users/joshbuchalter/Documents/casairt-2016-Josh-implementation/ObjectiveRunsSoFar/CZs_UPDATED/Hex-20161103T0000_null__NEAT/best networks/epoch-73/network.ser";
+        private String genomePath = null;
+        //private String genomePath = "results/Hex-20160920T2134_null__NEAT/best networks/epoch-5/network.ser";
+        //private String genomePath = "results/ruben-GE72-2QD-20161030T1126_null/best networks/epoch-1/network.ser";
+        //private String genomePath = "results/ruben-GE72-2QD-20161102T1342_null/best networks/epoch-1/network.ser";
 
         @Parameter(names = "--control", description = "Run with the control case")
-        public boolean control = false;
+        private boolean control = false;
 
         @Parameter(names = "--advanced", description = "Run with advanced envrionment and morphology")
-        public boolean advanced = true;
+        private boolean advanced = true;
 
         @Parameter(names = "--environment", description = "Run with advanced envrionment and morphology")
-        public String environment = "";
+        private String environment = "";
 
         @Parameter(names = "--morphology", description = "For use with the control case, provide"
                 + " the path to a serialized MMNEATNetwork to have its morphology used for the"
                 + " control case")
-        public String morphologyPath = null;
+        private String morphologyPath = null;
 
         @Parameter(names = "--population", description = "To resume a previous controller, provide"
                 + " the path to a serialized population")
-        public String populationPath = null;
+        private String populationPath = null;
 
         @Override
         public String toString() {
@@ -426,7 +154,6 @@ public class Main {
                     + "\tNumber of generations: " + numGenerations + "\n"
                     + "\tPopulation size: " + populationSize + "\n"
                     + "\tNumber of simulation tests per iteration: " + simulationRuns + "\n"
-                    + "\tSearch mechanism implemented: " + searchMechanism.name() + "\n"
                     + "\tInitial connection density: " + connectionDensity + "\n"
                     + "\tDemo network config path: " + genomePath + "\n"
                     + "\tRunning with the control case: " + control + "\n"
@@ -434,4 +161,5 @@ public class Main {
                     + "\tPopulation path: " + populationPath;
         }
     }
+
 }
