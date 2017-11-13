@@ -279,7 +279,12 @@ public class ScoreCalculator implements CalculateScore {
     		numBConnected_Stats.addValue(resultantBehaviour.getConnectedB());
     		numCConnected_Stats.addValue(resultantBehaviour.getConnectedC());
 
-            double normalisedA = resultantBehaviour.getConnectedA() / resTypeCount[0];
+
+
+            double normalisedA = 0; 
+            if(resTypeCount[0] != 0) {
+                normalisedA = resultantBehaviour.getConnectedA() / resTypeCount[0];
+            }
 
             double normalisedB = 0;
             if(resTypeCount[1] != 0) {

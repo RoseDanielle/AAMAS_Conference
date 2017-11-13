@@ -48,7 +48,7 @@ public class Main {
 
 	private static Archive archive;
 
-    private static int[] morphIndex = [1, 3, 5]; //the indices of the morphologies used in the source files
+    private static int[] morphIndex = {1, 3, 5}; //the indices of the morphologies used in the source files
 
 	public static void main(String args[]) throws IOException, ParseException{
 
@@ -90,7 +90,7 @@ public class Main {
                         difficultyLevel = "Level_3";
                     }
 
-                    String folderDir = "/Results/HyperNEATObjective/SourceMorphology_" + Integer.toString(sourceNetwork) + "/TestMorph_" + Integer.toString(morphIndex[j]) + "/Level_" + difficultyLevel;
+                    String folderDir = "/HyperNEATObjective/SourceMorphology_" + Integer.toString(sourceNetwork) + "/TestMorph_" + Integer.toString(morphIndex[j]) + "/Level_" + difficultyLevel;
                     Utils.setDirectoryName(folderDir);
 
                     ScoreCalculator scoreCalculator = new ScoreCalculator(simConfig, options.simulationRuns,
