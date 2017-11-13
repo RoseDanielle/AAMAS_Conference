@@ -67,7 +67,7 @@ public class Main {
 
                     int difficulty = k+1;
 
-                    String networkSourceDirectory = "/home/ruben/Masters_2017/AAMAS_Conference/Raw_Experiment_Results/EvaluationRuns_Code/AAMAS_Conference/BestNetworks/HyperNEATObjective/Morphology_" + Integer.toString(sourceNetwork) + "/Level_" + Integer.toString(difficulty) + "/network.ser";
+                    String networkSourceDirectory = "/home/ruben/Masters_2017/AAMAS_Conference/Raw_Experiment_Results/EvaluationRuns_Code/AAMAS_Conference/BestNetworks/HyperNEATNovelty/Morphology_" + Integer.toString(sourceNetwork) + "/Level_" + Integer.toString(difficulty) + "/network.ser";
 
                     //getting the correct simulation configuration for this experiment case
                     //simconfig shows the types of blocks present, as well as their properties and the connection schema that is to be used
@@ -90,7 +90,7 @@ public class Main {
                         difficultyLevel = "Level_3";
                     }
 
-                    String folderDir = "/HyperNEATObjective/SourceMorphology_" + Integer.toString(sourceNetwork) + "/TestMorph_" + Integer.toString(morphIndex[j]) + "/Level_" + difficultyLevel;
+                    String folderDir = "/HyperNEATNovelty/SourceMorphology_" + Integer.toString(sourceNetwork) + "/TestMorph_" + Integer.toString(morphIndex[j]) + "(" + Integer.toString(j+1) + ")/Level_" + difficultyLevel;
                     Utils.setDirectoryName(folderDir);
 
                     ScoreCalculator scoreCalculator = new ScoreCalculator(simConfig, options.simulationRuns,
