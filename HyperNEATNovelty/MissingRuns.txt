@@ -1,0 +1,58 @@
+Run = 3 Morphology = 3 Level = 1 
+Run = 3 Morphology = 3 Level = 2 
+Run = 3 Morphology = 3 Level = 3 
+Run = 3 Morphology = 5 Level = 1 
+Run = 3 Morphology = 5 Level = 2 
+Run = 3 Morphology = 5 Level = 3 
+
+Run = 4 Morphology = 3 Level = 2 
+Run = 4 Morphology = 3 Level = 3 
+Run = 4 Morphology = 5 Level = 1 
+Run = 4 Morphology = 5 Level = 2 
+Run = 4 Morphology = 5 Level = 3 
+
+Run = 6 Morphology = 3 Level = 2 
+Run = 6 Morphology = 3 Level = 3 
+Run = 6 Morphology = 5 Level = 1 
+Run = 6 Morphology = 5 Level = 2 
+Run = 6 Morphology = 5 Level = 3 
+
+Run = 11 Morphology = 1 Level = 3 
+Run = 11 Morphology = 3 Level = 1 
+Run = 11 Morphology = 3 Level = 2 
+Run = 11 Morphology = 3 Level = 3 
+Run = 11 Morphology = 5 Level = 1 
+Run = 11 Morphology = 5 Level = 2 
+Run = 11 Morphology = 5 Level = 3 
+
+Run = 15 Morphology = 1 Level = 2 
+Run = 15 Morphology = 1 Level = 3 
+Run = 15 Morphology = 3 Level = 1 
+Run = 15 Morphology = 3 Level = 2 
+Run = 15 Morphology = 3 Level = 3 
+Run = 15 Morphology = 5 Level = 1 
+Run = 15 Morphology = 5 Level = 2 
+Run = 15 Morphology = 5 Level = 3 
+
+Run = 16 Morphology = 5 Level = 1 
+Run = 16 Morphology = 5 Level = 2 
+Run = 16 Morphology = 5 Level = 3 
+
+Run = 17 Morphology = 5 Level = 2 
+Run = 17 Morphology = 5 Level = 3 
+
+Run = 18 Morphology = 5 Level = 2 
+Run = 18 Morphology = 5 Level = 3 
+
+Run = 19 Morphology = 5 Level = 2 
+Run = 19 Morphology = 5 Level = 3 
+
+Run = 20 Morphology = 1 Level = 2 
+Run = 20 Morphology = 1 Level = 3 
+Run = 20 Morphology = 3 Level = 1 
+Run = 20 Morphology = 3 Level = 2 
+Run = 20 Morphology = 3 Level = 3 
+Run = 20 Morphology = 5 Level = 1 
+Run = 20 Morphology = 5 Level = 2 
+Run = 20 Morphology = 5 Level = 3 
+
