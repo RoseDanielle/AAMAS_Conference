@@ -48,63 +48,68 @@ public class Main {
 
 	private static Archive archive;
 
+    private static int[] morphIndex = [1, 3, 5]; //the indices of the morphologies used in the source files
+
 	public static void main(String args[]) throws IOException, ParseException{
 
-		for(int k = 0; k < 3; k++) { //iterating over the different complexity levels
+        //iterating over the networks that need to be implemented, indexed according to the morpholgoy that they were evolved with
+        for(int l = 0; l < 3; l++) { //iterating over the original morphs that the networks were trained with. This loop relates to iterating over the source networks that need to be implemented with the other morphs
 
-			Args options = new Args();
-			new JCommander(options, args);
-			log.info(options.toString());
+            int sourceNetwork = l+1;
 
-			int difficulty = k+1;
+            for(int j = 0; j < 3; j++) { //iterating over the different morphologies to implement in the evaluation phase
 
-			//getting the correct simulation configuration for this experiment case
-			//simconfig shows the types of blocks present, as well as their properties and the connection schema that is to be used
-			String simConfigFP = "configs/simConfig" + Integer.toString(difficulty) + ".yml";
-			SimConfig simConfig = new SimConfig(simConfigFP);
+                for(int k = 0; k < 3; k++) { //iterating over the different complexity levels
 
-			SensorCollection sensorCollection = new SensorCollection("configs/morphologyConfig.yml");
-			Morphology morphology = sensorCollection.getMorph(2);
-			numInputs = morphology.getNumSensors();
+                    Args options = new Args();
+                    new JCommander(options, args);
+                    log.info(options.toString());
 
-			//creating the folder directory for the results
-			String difficultyLevel = "";
-			if (difficulty == 1) {
-                difficultyLevel = "Level_1_nocoop_simple";
+                    int difficulty = k+1;
+
+                    String networkSourceDirectory = "/home/ruben/Masters_2017/AAMAS_Conference/Raw_Experiment_Results/EvaluationRuns_Code/AAMAS_Conference/BestNetworks/HyperNEATObjective/Morphology_" + Integer.toString(sourceNetwork) + "/Level_" + Integer.toString(difficulty) + "/network.ser";
+
+                    //getting the correct simulation configuration for this experiment case
+                    //simconfig shows the types of blocks present, as well as their properties and the connection schema that is to be used
+                    String simConfigFP = "configs/simConfig" + Integer.toString(difficulty) + ".yml";
+                    SimConfig simConfig = new SimConfig(simConfigFP);
+
+                    SensorCollection sensorCollection = new SensorCollection("configs/morphologyConfig.yml");
+                    Morphology morphology = sensorCollection.getMorph(morphIndex[j]); //loading the correctly indexed morphology
+                    numInputs = morphology.getNumSensors();
+
+                    //creating the folder directory for the results
+                    String difficultyLevel = "";
+                    if (difficulty == 1) {
+                        difficultyLevel = "Level_1";
+                    }
+                    else if (difficulty == 2) {
+                        difficultyLevel = "Level_2";
+                    }
+                    else if (difficulty == 3) {
+                        difficultyLevel = "Level_3";
+                    }
+
+                    String folderDir = "/Results/HyperNEATObjective/SourceMorphology_" + Integer.toString(sourceNetwork) + "/TestMorph_" + Integer.toString(morphIndex[j]) + "/Level_" + difficultyLevel;
+                    Utils.setDirectoryName(folderDir);
+
+                    ScoreCalculator scoreCalculator = new ScoreCalculator(simConfig, options.simulationRuns,
+                                        morphology, options.populationSize, sensorCollection);
+
+                    if (!isBlank(options.genomePath)) {
+                           NEATNetwork network = (NEATNetwork) readObjectFromFile(options.genomePath);
+                           scoreCalculator.demo(network);
+                           return;
+                    }
+
+                    NEATNetwork network = (NEATNetwork) readObjectFromFile(networkSourceDirectory);
+
+                    scoreCalculator.runEvaluation(network);
+                    log.debug("Evaluation Complete");
+                    Encog.getInstance().shutdown();
+                }
             }
-            else if (difficulty == 2) {
-                difficultyLevel = "Level_2_coop_simple";
-            }
-            else if (difficulty == 3) {
-                difficultyLevel = "Level_3_nocoop_complex";
-            }
-            else if(difficulty == 4) {
-                difficultyLevel = "Level_4_coop_complex";
-            }
-			String folderDir = "/EvaluationRuns/GitBranch/" + difficultyLevel;
-			Utils.setDirectoryName(folderDir);
-
-			ScoreCalculator scoreCalculator = new ScoreCalculator(simConfig, options.simulationRuns,
-								morphology, options.populationSize, sensorCollection);
-
-			if (!isBlank(options.genomePath)) {
-				   NEATNetwork network = (NEATNetwork) readObjectFromFile(options.genomePath);
-				   scoreCalculator.demo(network);
-				   return;
-		    }
-
-			String networkSourceDirectory = "/home/ruben/Masters_2017/Experiments/EvaluationRuns/ExperimentsRerun/ResultNetworks/network.ser";
-
-			//final StatsRecorder statsRecorder = new StatsRecorder(trainer, scoreCalculator); //this is basically where the simulation runs
-
-			NEATNetwork network = (NEATNetwork) readObjectFromFile(networkSourceDirectory);
-
-			//final StatsRecorder statsRecorder = new StatsRecorder(scoreCalculator); //this is basically where the simulation runs
-
-			scoreCalculator.runEvaluation(network);
-			log.debug("Evaluation Complete");
-			Encog.getInstance().shutdown();
-		}
+        }
 	}
 
 	private static class Args {

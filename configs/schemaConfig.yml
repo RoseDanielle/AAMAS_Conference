@@ -169,3 +169,55 @@ config9:
     right: X
     up: A
     down: B
+config10:
+  resQuantity : 15 0 0
+  resource0:
+    left: A
+    right: A
+    up: A
+    down: A
+  resource1:
+    left: X
+    right: X
+    up: X
+    down: X
+  resource2:
+    left: X
+    right: X
+    up: X
+    down: X
+config11:
+  resQuantity : 0 15 0
+  resource0:
+    left: X
+    right: X
+    up: X
+    down: X
+  resource1:
+    left: B
+    right: B
+    up: B
+    down: B
+  resource2:
+    left: X
+    right: X
+    up: X
+    down: X
+config12:
+  resQuantity : 0 0 15
+  resource0:
+    left: X
+    right: X
+    up: X
+    down: X
+  resource1:
+    left: X
+    right: X
+    up: X
+    down: X
+  resource2:
+    left: C
+    right: C
+    up: C
+    down: C
+  
