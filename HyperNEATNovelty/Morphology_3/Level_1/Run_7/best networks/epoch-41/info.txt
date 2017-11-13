@@ -1,1 +1,1 @@
-epoch: 41, fitness: 274.826556
+epoch: 41, fitness: 276.436277
